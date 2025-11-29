@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Fasicomércio — Cadastros</title>
+
+    <!-- evita 404 de favicon -->
+    <link rel="icon" href="data:," />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=9"/>
+</head>
+<body>
+<header class="topbar" role="banner">
+    <div class="brand"><span>Fasi</span>comércio</div>
+    <div class="avatar" aria-label="Perfil do usuário" title="Perfil"></div>
+</header>
+
+<div class="layout">
+    <nav class="sidebar" aria-label="Menu principal">
+        <button class="nav-item" data-view="home">Início</button>
+        <button class="nav-item" data-view="cadastros" aria-current="page">Cadastro</button>
+        <button class="nav-item" data-view="estoque">Estoque</button>
+        <button class="nav-item outline" id="btnSair">Sair</button>
+    </nav>
+
+    <main class="content" id="app" tabindex="-1">
+        <!-- Home -->
+        <section data-section="home" hidden>
+            <h1 class="title">Bem-vindo(a)!</h1>
+            <p class="subtitle">Use o menu à esquerda para cadastrar <strong>Produtos</strong> e <strong>Serviços</strong>.</p>
+        </section>
+
+        <!-- CADASTROS -->
+        <section data-section="cadastros">
+            <!-- Botões (tabs) -->
+            <div class="switch-group" role="tablist" aria-label="Seleção de cadastro">
+                <button class="switch js-tab-prod is-active" role="tab" aria-selected="true">Produtos</button>
+                <button class="switch js-tab-serv" role="tab" aria-selected="false">Serviços</button>
+            </div>
+
+            <!-- Form Produto -->
+            <form id="formProduto" class="card form">
+                <div class="grid">
+                    <div class="field">
+                        <label for="p-nome">Nome</label>
+                        <input id="p-nome" name="nomeProduto" maxlength="50" required/>
+                    </div>
+                    <div class="field">
+                        <label for="p-descricao">Descrição</label>
+                        <input id="p-descricao" name="descricao_produto" maxlength="250" required/>
+                    </div>
+                    <div class="field">
+                        <label for="p-codbarras">Código de Barras (EAN-13)</label>
+                        <input id="p-codbarras" name="codg_barras_prod" inputmode="numeric" pattern="^\d{8,14}$" required/>
+                    </div>
+                    <div class="field">
+                        <label for="p-unmedida">ID Unidade de Medida</label>
+                        <input id="p-unmedida" name="id_unmedida" inputmode="numeric" required/>
+                    </div>
+                    <div class="field">
+                        <label for="p-temp">Temperatura Ideal (°C)</label>
+                        <input id="p-temp" name="temperatura_produto" type="number" step="0.01" />
+                    </div>
+                    <div class="field">
+                        <label for="p-almox">ID Almoxarifado (opcional)</label>
+                        <input id="p-almox" name="id_almoxarifado" inputmode="numeric"/>
+                    </div>
+                    <div class="field">
+                        <label for="p-stqmin">Estoque Mínimo</label>
+                        <input id="p-stqmin" name="estoque_minimo" type="number" min="0" required/>
+                    </div>
+                    <div class="field">
+                        <label for="p-stqmax">Estoque Máximo</label>
+                        <input id="p-stqmax" name="estoque_maximo" type="number" min="0" required/>
+                    </div>
+                    <div class="field">
+                        <label for="p-ponto">Ponto de Pedido</label>
+                        <input id="p-ponto" name="ponto_abastecimento" type="number" min="0" required/>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Salvar</button>
+                    <button type="reset" class="btn">Limpar</button>
+                </div>
+                <p class="hint">Regra: estoque máximo &gt; mínimo, ponto de pedido: &gt; mínimo e ≤ máximo.</p>
+                <div class="feedback" aria-live="polite"></div>
+            </form>
+
+            <!-- Form Serviço -->
+            <form id="formServico" class="card form" hidden>
+                <div class="grid">
+                    <div class="field">
+                        <label for="s-nome">Nome do Serviço</label>
+                        <input id="s-nome" name="nomeProduto" maxlength="50" required/>
+                    </div>
+                    <div class="field">
+                        <label for="s-descricao">Descrição</label>
+                        <input id="s-descricao" name="descricao_produto" maxlength="250" required/>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Salvar Serviço</button>
+                    <button type="reset" class="btn">Limpar</button>
+                </div>
+                <div class="feedback" aria-live="polite"></div>
+            </form>
+
+            <!-- Lista -->
+            <div class="card">
+                <div class="list-head">
+                    <h2 class="subtitle">Produtos Cadastrados</h2>
+                    <div class="actions-inline">
+                        <input id="filtroNome" class="input" placeholder="Filtrar por nome..." aria-label="Filtrar por nome">
+                        <button id="btnRecarregar" class="btn">Recarregar</button>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="table" aria-describedby="legendProdutos">
+                        <caption id="legendProdutos" class="sr-only">Lista de Produtos</caption>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Código</th>
+                            <th>Estoque (min/max/pp)</th>
+                            <th>Unid</th>
+                            <th>Almox</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbodyProdutos"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Estoque (placeholder) -->
+        <section data-section="estoque" hidden>
+            <h1 class="title">Estoque</h1>
+            <p class="subtitle">Em breve.</p>
+        </section>
+    </main>
+</div>
+
+<script type="module" src="./app.js?v=9"></script>
+</body>
+</html>
